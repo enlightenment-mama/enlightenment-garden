@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#5fa83a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="全科启蒙打卡">
+<meta name="description" content="0-6岁全科启蒙打卡 - 完成每日任务保卫花园，收集阳光兑换奖励">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>🌻 0-6岁全科启蒙打卡 · 保卫花园 🧟</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --grass-1:#7ec850;--grass-2:#5fa83a;--grass-3:#4a8c2e;
+  --sky-1:#87ceeb;--sky-2:#b0e0e6;
+  --sun:#ffd966;--sun-glow:#ffeaa7;
+  --soil:#8b6f47;--soil-dark:#6b5538;
+  --wood:#5d4037;--wood-light:#8d6e63;
+  --sunlight:#ffb800;--sunlight-light:#ffd54f;--sunlight-dark:#e8a000;
+  --danger:#e74c3c;--danger-light:#ffcdd2;
+  --success:#27ae60;--success-light:#a5d6a7;
+  --warning:#f39c12;--warning-light:#fff3c4;
+  --info:#3498db;--info-light:#bbdefb;
+  --text:#3e2723;--text-light:#6d4c41;--text-muted:#a1887f;
+  --bg:#f5f1e8;--card-bg:#fffef5;--card-border:#e8e0c8;
+  --purple:#9b59b6;--purple-light:#e1bee7;
+  --red:#e74c3c;--red-light:#ffcdd2;
+  --orange:#ff9800;--orange-light:#ffe0b2;
+  --blue:#2196f3;--blue-light:#bbdefb;
+  --green:#4caf50;--green-light:#c8e6c9;
+  --sidebar-w:80px;
+  --shadow:0 2px 8px rgba(0,0,0,.12);
+  --shadow-lg:0 6px 20px rgba(0,0,0,.18);
+  --radius:14px;--radius-sm:8px;--radius-pill:999px;
+}
+html,body{height:100%;font-family:'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif;color:var(--text);overflow:hidden;-webkit-tap-highlight-color:transparent}
+body{display:flex;flex-direction:column;height:100vh;background:var(--bg)}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,textarea,select{font-family:inherit;outline:none;border:1px solid var(--card-border)}
+ul{list-style:none}
+
+header.top-bar{height:56px;background:linear-gradient(135deg,var(--grass-2),var(--grass-3));color:#fff;padding:0 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:20;flex-shrink:0}
+.base-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.base-icon{font-size:1.5em;flex-shrink:0}
+.base-name{font-size:1.05em;font-weight:bold;text-shadow:1px 1px 2px rgba(0,0,0,.3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;cursor:pointer}
+.top-stats{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.top-stat{display:flex;align-items:center;gap:3px;background:rgba(0,0,0,.2);padding:4px 9px;border-radius:var(--radius-pill);font-size:.82em;font-weight:bold;white-space:nowrap}
+.top-stat.sun{background:var(--sunlight);color:var(--text);box-shadow:0 2px 6px rgba(255,184,0,.4)}
+.top-stat.fire{animation:sunfire .8s}
+@keyframes sunfire{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+.main-area{display:flex;flex:1;overflow:hidden;min-height:0}
+nav.sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,var(--wood-light),var(--wood));padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;overflow-y:auto;z-index:10;box-shadow:2px 0 12px rgba(0,0,0,.2);scrollbar-width:none}
+nav.sidebar::-webkit-scrollbar{display:none}
+nav .nav-item{width:62px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--radius);color:#fff;transition:.2s;position:relative;font-size:.62em;font-weight:bold;border:2px solid transparent;padding:2px}
+nav .nav-item:hover{background:rgba(255,255,255,.15)}
+nav .nav-item.active{background:linear-gradient(135deg,var(--sunlight),var(--warning));color:var(--text);border-color:var(--sunlight);box-shadow:0 2px 12px rgba(255,184,0,.5)}
+nav .nav-item .nav-icon{font-size:1.7em;line-height:1}
+nav .nav-item .nav-label{margin-top:2px}
+nav .nav-item .toggle-dot{position:absolute;top:3px;right:5px;width:7px;height:7px;border-radius:50%;background:#aaa;border:1px solid #fff}
+nav .nav-item.enabled .toggle-dot{background:var(--success)}
+nav .nav-divider{width:60%;height:1px;background:rgba(255,255,255,.15);margin:2px auto}
+
+main.content{flex:1;overflow-y:auto;background:var(--bg);position:relative;-webkit-overflow-scrolling:touch}
+.view{display:none;animation:fadeIn .3s;min-height:100%;padding-bottom:80px}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.base-view,.module-view{padding:12px}
+.base-header{background:linear-gradient(135deg,#fff9c4,#ffe082);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:12px;border:3px solid var(--sunlight)}
+.base-header h2{font-size:1.2em;color:var(--grass-3);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.base-header .base-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.base-header .stat-box{background:rgba(255,255,255,.7);border-radius:var(--radius-sm);padding:8px;text-align:center}
+.base-header .stat-box .v{font-size:1.3em;font-weight:bold;color:var(--grass-3)}
+.base-header .stat-box .l{font-size:.7em;color:var(--text-muted);margin-top:2px}
+
+.battlefield{background:linear-gradient(180deg,#a3d5e8 0%,var(--sky-1) 30%,#9fd668 31%,var(--grass-1) 60%,var(--grass-2) 100%);border-radius:var(--radius);height:130px;position:relative;overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow);border:3px solid var(--grass-3)}
+.bf-row{display:flex;align-items:center;justify-content:space-between;height:100%;padding:0 10px}
+.bf-home{font-size:1.6em;flex-shrink:0}
+.bf-plants,.bf-lawn,.bf-zombies{display:flex;align-items:center;gap:2px;justify-content:center}
+.bf-plants{flex:0 0 38%}
+.bf-lawn{flex:0 0 15%;background:repeating-linear-gradient(90deg,transparent,transparent 10px,rgba(0,0,0,.05) 10px,rgba(0,0,0,.05) 20px);border-radius:6px;min-height:60px}
+.bf-zombies{flex:0 0 30%}
+.plant-cell,.zombie-cell{width:32px;height:32px;font-size:1.5em;display:flex;align-items:center;justify-content:center;filter:drop-shadow(1px 1px 2px rgba(0,0,0,.3));transition:all .3s;flex-shrink:0}
+.plant-cell.empty,.zombie-cell.empty{opacity:.15;font-size:1.1em}
+.plant-cell.new-plant{animation:plantPop .6s}
+@keyframes plantPop{0%{transform:scale(0) rotate(180deg)}60%{transform:scale(1.4) rotate(0)}100%{transform:scale(1)}}
+.zombie-cell.walking{animation:zombieWalk 1.2s infinite}
+@keyframes zombieWalk{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px) rotate(2deg)}}
+.bf-status{position:absolute;top:6px;left:8px;font-size:.68em;background:rgba(0,0,0,.4);color:#fff;padding:2px 8px;border-radius:var(--radius-pill);font-weight:bold}
+.bf-warning{position:absolute;top:6px;right:8px;font-size:.68em;background:var(--danger);color:#fff;padding:2px 8px;border-radius:var(--radius-pill);font-weight:bold;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.task-list{background:var(--card-bg);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow);margin-bottom:12px;border:2px solid var(--card-border)}
+.task-list h3{font-size:1.02em;color:var(--grass-3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.task-list .total-row{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--sunlight),var(--sunlight-light));padding:8px 12px;border-radius:var(--radius);margin-bottom:8px;font-weight:bold;color:var(--text)}
+.task-list .total-row .r{font-size:1.1em;display:flex;align-items:center;gap:4px}
+.task-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);transition:.2s;border-left:3px solid transparent}
+.task-item.done{background:rgba(126,200,80,.1);border-left-color:var(--grass-1)}
+.task-item.pending{border-left-color:var(--warning)}
+.task-item.disabled{opacity:.4;background:rgba(0,0,0,.05)}
+.task-item .icon{font-size:1.3em;flex-shrink:0}
+.task-item .content{flex:1;min-width:0}
+.task-item .name{font-size:.88em;font-weight:bold;color:var(--text)}
+.task-item .desc{font-size:.72em;color:var(--text-muted);margin-top:2px}
+.task-item .reward{font-size:.78em;font-weight:bold;color:var(--sunlight-dark);background:rgba(255,184,0,.15);padding:2px 8px;border-radius:var(--radius-pill);flex-shrink:0}
+.task-item.done .reward{color:var(--success);background:rgba(39,174,96,.15)}
+.task-item .toggle-btn{background:#fff;border:1px solid var(--card-border);padding:2px 8px;border-radius:var(--radius-pill);font-size:.68em;color:var(--text-muted);flex-shrink:0}
+.task-item .toggle-btn.on{background:var(--success-light);color:var(--success);border-color:var(--success)}
+
+.tip-card{background:linear-gradient(135deg,#fff9c4,#ffe082);border-radius:var(--radius);padding:10px 14px;font-size:.82em;color:var(--text-light);margin-bottom:12px;border:2px dashed var(--warning);display:flex;align-items:center;gap:8px;line-height:1.5}
+
+.module-header{background:var(--card-bg);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow);border:2px solid var(--card-border)}
+.module-header h2{font-size:1.15em;color:var(--grass-3);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.module-header p{font-size:.82em;color:var(--text-muted);line-height:1.5}
+.module-toggle{padding:4px 12px;border-radius:var(--radius-pill);font-size:.72em;font-weight:bold;cursor:pointer;transition:.2s;border:1px solid}
+.module-toggle.on{background:var(--success-light);color:var(--success);border-color:var(--success)}
+.module-toggle.off{background:var(--danger-light);color:var(--danger);border-color:var(--danger)}
+
+.sub-tab-bar{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.sub-tab-bar::-webkit-scrollbar{display:none}
+.sub-tab{flex-shrink:0;background:var(--card-bg);padding:7px 13px;border-radius:var(--radius-pill);font-size:.82em;font-weight:bold;color:var(--text-light);cursor:pointer;transition:.2s;border:2px solid transparent}
+.sub-tab.active{background:var(--grass-1);color:#fff;border-color:var(--grass-2)}
+.sub-tab:hover:not(.active){background:rgba(126,200,80,.15)}
+.sub-panel{display:none}
+.sub-panel.active{display:block;animation:fadeIn .2s}
+
+.add-row{display:flex;gap:6px;margin-bottom:10px;background:var(--card-bg);padding:8px;border-radius:var(--radius);box-shadow:var(--shadow);border:2px solid var(--card-border);flex-wrap:wrap}
+.add-row input{flex:1;padding:7px 10px;border:1px solid var(--card-border);border-radius:var(--radius-sm);font-size:.88em;min-width:0}
+.add-row input[type=number]{flex:0 0 60px}
+.add-row button{background:var(--grass-2);color:#fff;padding:7px 12px;border-radius:var(--radius-sm);font-weight:bold;flex-shrink:0;font-size:.85em}
+.add-row button:hover{background:var(--grass-3)}
+.add-row button.purple{background:var(--purple)}
+.add-row button.purple:hover{background:var(--accent)}
+
+.tag-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tag{background:var(--card-bg);border:2px solid var(--card-border);padding:5px 11px;border-radius:var(--radius-pill);font-size:.82em;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:4px}
+.tag:hover{border-color:var(--grass-1);background:rgba(126,200,80,.1)}
+.tag.selected{background:var(--grass-1);color:#fff;border-color:var(--grass-2)}
+.tag .tag-close{margin-left:4px;opacity:.6;font-size:.85em}
+.tag .tag-close:hover{opacity:1}
+.tag.selected .tag-close{color:#fff}
+
+.empty-tip{text-align:center;padding:30px 16px;color:var(--text-muted);font-size:.88em;background:var(--card-bg);border-radius:var(--radius);border:2px dashed var(--card-border)}
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:10px}
+.mini-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:var(--radius-sm);padding:10px;text-align:center;cursor:pointer;transition:.2s;font-size:.85em;position:relative}
+.mini-card:hover{border-color:var(--grass-1)}
+.mini-card.selected{background:var(--grass-1);color:#fff;border-color:var(--grass-2)}
+.mini-card.read{background:rgba(126,200,80,.15);border-color:var(--grass-1)}
+.mini-card .emoji{font-size:1.6em;display:block;margin-bottom:4px}
+.mini-card .check-mark{position:absolute;top:4px;right:6px;font-size:1.2em;color:var(--success);display:none}
+.mini-card.read .check-mark{display:block}
+
+.list-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--card-bg);border-radius:var(--radius-sm);border:2px solid var(--card-border);margin-bottom:6px;transition:.2s}
+.list-item.done{background:rgba(126,200,80,.1);border-color:var(--grass-1)}
+.list-item input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:var(--grass-2)}
+.list-item .text{flex:1;font-size:.88em}
+.list-item.done .text{text-decoration:line-through;color:var(--text-muted)}
+.list-item .del{color:var(--danger);opacity:.5;cursor:pointer;font-size:1.05em;padding:4px 8px}
+.list-item .del:hover{opacity:1}
+.list-item .meta{font-size:.72em;color:var(--text-muted);background:#f5f0e0;padding:2px 6px;border-radius:var(--radius-pill)}
+
+.badge{display:inline-block;background:var(--warning-light);color:var(--text);padding:2px 8px;border-radius:var(--radius-pill);font-size:.68em;font-weight:bold;margin-left:4px}
+.badge.danger{background:var(--danger-light);color:var(--danger)}
+.badge.success{background:var(--success-light);color:var(--success)}
+.badge.info{background:var(--info-light);color:var(--info)}
+.badge.purple{background:var(--purple-light);color:var(--purple)}
+
+.ebbinghaus{width:100%;border-collapse:collapse;background:var(--card-bg);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);font-size:.8em;margin-bottom:10px}
+.ebbinghaus th,.ebbinghaus td{padding:6px 4px;text-align:center;border:1px solid var(--card-border);min-width:34px}
+.ebbinghaus th{background:var(--grass-1);color:#fff;font-weight:bold;font-size:.82em}
+.ebbinghaus .name-cell{text-align:left;font-weight:bold;background:var(--card-bg);position:sticky;left:0;z-index:1;padding-left:8px;min-width:80px}
+.ebbinghaus .today-col{background:var(--warning-light)}
+.ebbinghaus td.done-cell{background:var(--success-light)}
+.ebbinghaus td.todo-cell{background:#fff}
+.ebbinghaus td.future-cell{background:#f5f5f5;color:var(--text-muted)}
+.ebbinghaus td.overdue-cell{background:var(--danger-light);color:var(--danger);font-weight:bold}
+.ebbinghaus .eb-check{display:flex;align-items:center;justify-content:center;height:22px;cursor:pointer;border-radius:4px;transition:.2s;font-size:1em}
+.ebbinghaus .eb-check:hover{background:rgba(0,0,0,.05)}
+
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.stat-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:var(--radius);padding:12px;text-align:center;box-shadow:var(--shadow)}
+.stat-card .v{font-size:1.8em;font-weight:bold;color:var(--grass-3)}
+.stat-card .l{font-size:.78em;color:var(--text-muted);margin-top:2px}
+.stat-card.purple .v{color:var(--purple)}
+.stat-card.warning .v{color:var(--warning)}
+.stat-card.danger .v{color:var(--danger)}
+
+.calendar-heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;background:var(--card-bg);padding:10px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;border:2px solid var(--card-border)}
+.heatmap-cell{aspect-ratio:1;border-radius:3px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:.55em;color:var(--text-muted)}
+.heatmap-cell.l1{background:var(--success-light)}
+.heatmap-cell.l2{background:var(--grass-1)}
+.heatmap-cell.l3{background:var(--grass-2)}
+.heatmap-cell.l4{background:var(--grass-3)}
+.heatmap-cell.l0{background:#f0f0f0}
+.heatmap-cell.today{outline:2px solid var(--warning)}
+
+.reward-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:var(--radius);padding:12px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px}
+.reward-card .icon{font-size:1.8em}
+.reward-card .info{flex:1}
+.reward-card .name{font-weight:bold;font-size:.92em}
+.reward-card .cost{font-size:.78em;color:var(--sunlight-dark);margin-top:2px}
+.reward-card button{background:var(--sunlight);color:var(--text);padding:6px 12px;border-radius:var(--radius-sm);font-weight:bold;font-size:.82em}
+.reward-card button:hover{background:var(--sunlight-dark)}
+.reward-card button:disabled{background:#ccc;color:#888;cursor:not-allowed}
+
+.plant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
+.plant-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:var(--radius);padding:10px;text-align:center;box-shadow:var(--shadow)}
+.plant-card .emoji{font-size:2em}
+.plant-card .date{font-size:.68em;color:var(--text-muted);margin-top:4px}
+.plant-card .from{font-size:.72em;color:var(--text-light);margin-top:2px}
+
+.toast{position:fixed;top:70px;left:50%;transform:translate(-50%,-200%);background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:1000;font-size:.88em;font-weight:bold;transition:transform .4s;display:flex;align-items:center;gap:6px;max-width:90vw;text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.toast.success{background:var(--success)}
+.toast.danger{background:var(--danger)}
+.toast.gold{background:var(--sunlight);color:var(--text)}
+
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-mask.show{display:flex}
+.modal{background:var(--card-bg);border-radius:var(--radius);padding:20px;max-width:380px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .3s}
+@keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal h3{margin-bottom:12px;color:var(--grass-3);font-size:1.1em;text-align:center}
+.modal .input-row{margin-bottom:10px}
+.modal input[type=password],.modal input[type=text]{width:100%;padding:12px;border:2px solid var(--card-border);border-radius:var(--radius-sm);font-size:1.05em;text-align:center;letter-spacing:4px}
+.modal .btn-row{display:flex;gap:8px;margin-top:8px}
+.modal button{flex:1;padding:11px;border-radius:var(--radius-sm);font-weight:bold;font-size:.95em}
+.modal .btn-primary{background:var(--grass-2);color:#fff}
+.modal .btn-primary:hover{background:var(--grass-3)}
+.modal .btn-secondary{background:#fff;color:var(--text);border:1px solid var(--card-border)}
+.modal .err{color:var(--danger);font-size:.8em;margin-bottom:8px;min-height:1em;text-align:center}
+
+.celebration{position:fixed;inset:0;pointer-events:none;z-index:998;display:none}
+.celebration.show{display:block}
+.confetti{position:absolute;width:8px;height:8px;opacity:0}
+.celebration.show .confetti{animation:confettiFall 2.5s ease-out forwards}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(-10vh) rotate(0)}100%{opacity:0;transform:translateY(110vh) rotate(720deg)}}
+.celebration-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,var(--sunlight),var(--warning));color:#fff;padding:18px 30px;border-radius:16px;font-size:1.3em;font-weight:bold;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:1001;transition:transform .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.celebration.show .celebration-banner{transform:translate(-50%,-50%) scale(1)}
+
+.section-title{font-size:1em;font-weight:bold;color:var(--text);margin-bottom:8px;margin-top:12px;display:flex;align-items:center;gap:6px}
+.section-title .count{margin-left:auto;background:var(--grass-1);color:#fff;padding:2px 10px;border-radius:var(--radius-pill);font-size:.78em}
+.four-col{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+@media(min-width:480px){.four-col{grid-template-columns:repeat(4,1fr)}}
+.four-col .col-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow)}
+.four-col .col-card h4{font-size:.88em;margin-bottom:6px;padding-bottom:4px;border-bottom:2px dashed var(--card-border);display:flex;align-items:center;gap:4px}
+.four-col .col-card .count-big{font-size:1.4em;font-weight:bold;color:var(--grass-3);text-align:center;margin:6px 0}
+.four-col .col-card.learning{border-color:var(--blue)}
+.four-col .col-card.review{border-color:var(--orange)}
+.four-col .col-card.mastered{border-color:var(--success)}
+.four-col .col-card.weak{border-color:var(--danger)}
+.four-col .col-card .chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.four-col .col-card .chip{background:#f5f0e0;padding:3px 8px;border-radius:var(--radius-pill);font-size:.82em}
+.four-col .col-card.mastered .chip{background:var(--success-light);color:var(--success)}
+.four-col .col-card.weak .chip{background:var(--danger-light);color:var(--danger)}
+.four-col .col-card .move-btns{display:flex;gap:4px;margin-top:4px;justify-content:center;flex-wrap:wrap}
+.four-col .col-card .move-btns button{font-size:.68em;padding:2px 6px;border-radius:var(--radius-pill);background:#f5f0e0;color:var(--text-light)}
+
+.bottom-fab{position:fixed;right:14px;bottom:14px;z-index:50;display:flex;flex-direction:column;gap:8px}
+.fab{width:46px;height:46px;border-radius:50%;background:var(--grass-2);color:#fff;font-size:1.3em;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:.2s}
+.fab:hover{transform:scale(1.1)}
+.fab.gold{background:var(--sunlight);color:var(--text)}
+
+@media(max-width:380px){
+  nav .nav-item{width:54px;height:54px;font-size:.58em}
+  nav .nav-item .nav-icon{font-size:1.6em}
+}
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="base-info">
+    <span class="base-icon">🌻</span>
+    <span class="base-name" id="baseName" onclick="openSettings()">我的花园基地</span>
+  </div>
+  <div class="top-stats">
+    <div class="top-stat sun" id="sunlightTop" title="阳光">☀️ <b id="sunlightVal">0</b></div>
+    <div class="top-stat" title="向日葵">🌻 <b id="sunflowerVal">0</b></div>
+    <div class="top-stat" title="连续打卡">🔥 <b id="streakVal">0</b></div>
+  </div>
+</header>
+
+<div class="main-area">
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-item active enabled" data-view="base" onclick="switchView('base')"><span class="nav-icon">🏠</span><span class="nav-label">基地</span><span class="toggle-dot"></span></div>
+    <div class="nav-item enabled" data-view="books" onclick="switchView('books')"><span class="nav-icon">📚</span><span class="nav-label">绘本</span><span class="toggle-dot"></span></div>
+    <div class="nav-item enabled" data-view="english" onclick="switchView('english')"><span class="nav-icon">🔤</span><span class="nav-label">英语</span><span class="toggle-dot"></span></div>
+    <div class="nav-item enabled" data-view="poetry" onclick="switchView('poetry')"><span class="nav-icon">📜</span><span class="nav-label">古诗</span><span class="toggle-dot"></span></div>
+    <div class="nav-item enabled" data-view="literacy" onclick="switchView('literacy')"><span class="nav-icon">✏️</span><span class="nav-label">识字</span><span class="toggle-dot"></span></div>
+    <div class="nav-item enabled" data-view="math" onclick="switchView('math')"><span class="nav-icon">🔢</span><span class="nav-label">数学</span><span class="toggle-dot"></span></div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" data-view="plants" onclick="switchView('plants')"><span class="nav-icon">🌻</span><span class="nav-label">植物</span></div>
+    <div class="nav-item" data-view="stats" onclick="switchView('stats')"><span class="nav-icon">📊</span><span class="nav-label">统计</span></div>
+    <div class="nav-item" data-view="rewards" onclick="switchView('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">奖励</span></div>
+  </nav>
+
+  <main class="content" id="content">
+    <!-- 基地视图 -->
+    <section class="view active base-view" id="view-base">
+      <div class="base-header">
+        <h2>🌻 <span id="baseTitle">我的花园基地</span></h2>
+        <div style="font-size:.85em;color:var(--text-light)" id="todayDate"></div>
+        <div class="base-stats">
+          <div class="stat-box"><div class="v" id="todaySunlight">0</div><div class="l">今日阳光</div></div>
+          <div class="stat-box"><div class="v" id="todaySunflower">0</div><div class="l">今日向日葵</div></div>
+          <div class="stat-box"><div class="v" id="todayZombie">0</div><div class="l">今日僵尸</div></div>
+        </div>
+      </div>
+      <div class="battlefield" id="battlefield">
+        <div class="bf-status" id="bfStatus">🛡️ 防线安全</div>
+        <div class="bf-row">
+          <div class="bf-home">🏠</div>
+          <div class="bf-plants" id="bfPlants"></div>
+          <div class="bf-lawn" id="bfLawn"></div>
+          <div class="bf-zombies" id="bfZombies"></div>
+        </div>
+      </div>
+      <div class="task-list">
+        <h3>📋 今日任务 <span class="badge" id="taskProgress">0/0</span></h3>
+        <div class="total-row">
+          <span class="l">今日阳光</span>
+          <span class="r">☀️ <b id="todaySunlightList">0</b></span>
+        </div>
+        <div id="taskListContainer"></div>
+      </div>
+      <div class="tip-card" id="tipCard">💡 完成每个子栏目 +20 阳光，100 阳光自动兑换 1 朵向日葵 🌻。未完成任务僵尸会前进！</div>
+    </section>
+
+    <!-- 绘本视图 -->
+    <section class="view module-view" id="view-books"></section>
+    <!-- 英语视图 -->
+    <section class="view module-view" id="view-english"></section>
+    <!-- 古诗视图 -->
+    <section class="view module-view" id="view-poetry"></section>
+    <!-- 识字视图 -->
+    <section class="view module-view" id="view-literacy"></section>
+    <!-- 数学视图 -->
+    <section class="view module-view" id="view-math"></section>
+    <!-- 植物视图 -->
+    <section class="view module-view" id="view-plants"></section>
+    <!-- 统计视图 -->
+    <section class="view module-view" id="view-stats"></section>
+    <!-- 奖励视图 -->
+    <section class="view module-view" id="view-rewards"></section>
+  </main>
+</div>
+
+<div class="bottom-fab">
+  <div class="fab gold" onclick="openSettings()" title="设置">⚙️</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-mask" id="modalMask"><div class="modal" id="modalContent"></div></div>
+<div class="celebration" id="celebration"><div class="celebration-banner" id="celebrationBanner">🎉 全部完成！</div></div>
+
+<script>
+// ==================== 数据层 ====================
+const STORAGE_KEY = 'enlightenmentGarden_v3';
+const WEEKDAYS = ['日','一','二','三','四','五','六'];
+
+// 艾宾浩斯复习间隔（天）
+const EB_INTERVALS = [1, 2, 4, 7, 15, 30];
+
+// 热门绘本预设
+const POPULAR_BOOKS = {
+  zh: [
+    {name:'我爸爸',emoji:'👨'},{name:'我妈妈',emoji:'👩'},{name:'猜猜我有多爱你',emoji:'🐰'},
+    {name:'好饿的毛毛虫',emoji:'🐛'},{name:'爷爷一定有办法',emoji:'👴'},{name:'逃家小兔',emoji:'🐰'},
+    {name:'活了100万次的猫',emoji:'🐱'},{name:'鳄鱼怕怕牙医怕怕',emoji:'🐊'},{name:'我是霸王龙',emoji:'🦖'},
+    {name:'团圆',emoji:'🥟'},{name:'打架的艺术',emoji:'✊'},{name:'大卫不可以',emoji:'👦'}
+  ],
+  en: [
+    {name:'Brown Bear',emoji:'🐻'},{name:'The Very Hungry Caterpillar',emoji:'🐛'},
+    {name:'Goodnight Moon',emoji:'🌙'},{name:'The Cat in the Hat',emoji:'🐱'},
+    {name:'Pat the Bunny',emoji:'🐰'},{name:'Go, Dog. Go!',emoji:'🚗'},
+    {name:'Biscuit',emoji:'🐶'},{name:'Frog and Toad',emoji:'🐸'},
+    {name:'Caps for Sale',emoji:'🎩'},{name:'Mouse Paint',emoji:'🐭'}
+  ],
+  math: [
+    {name:'好饿的毛毛虫',emoji:'🐛'},{name:'数学帮帮忙',emoji:'📐'},{name:'走进奇妙的数学世界',emoji:'🔢'},
+    {name:'汉声数学图画书',emoji:'📚'},{name:'数学绘本大系',emoji:'🧮'},{name:'安野光雅数学绘本',emoji:'🎨'}
+  ],
+  science: [
+    {name:'揭秘系列',emoji:'🔍'},{name:'DK儿童百科全书',emoji:'📖'},{name:'我们的身体',emoji:'🧬'},
+    {name:'神奇校车',emoji:'🚌'},{name:'蚯蚓的日记',emoji:'🪱'},{name:'小种子',emoji:'🌱'},
+    {name:'宇宙有多大',emoji:'🌍'},{name:'肚子里有个火车站',emoji:'🚂'},{name:'水先生的奇妙之旅',emoji:'💧'}
+  ]
+};
+
+const POPULAR_ANIMATIONS = [
+  {name:'SSS 儿歌'},{name:'Yakka Dee'},{name:'Wow English'},{name:'Big Muzzy'},
+  {name:'小狐狸分级动画'},{name:'Numberblocks'},{name:'Peppa Pig'},{name:'Bluey'}
+];
+
+const MATH_TOOLS = ['认识数字','数物对应','计算','圆点卡','磁力积木','十格阵','百数板'];
+
+const PLANT_TYPES = ['🌻','🌸','🌷','🌹','🌺','🌼','🌵','🪴'];
+const ZOMBIE_TYPES = ['🧟','🧟‍♂️','🧟‍♀️','👻'];
+
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dateStr(offset){const d=new Date();d.setDate(d.getDate()+offset);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function daysBetween(a,b){return Math.round((parseDate(b)-parseDate(a))/86400000)}
+function isToday(s){return s===todayStr()}
+
+function defaultState(){
+  return {
+    auth:{passwordHash:null,createdAt:null},
+    settings:{baseName:'我的花园基地',checkTime:'22:00'},
+    modules:{
+      books_zh:{enabled:true,target:3},
+      books_en:{enabled:true,target:2},
+      books_math:{enabled:false,target:1},
+      books_science:{enabled:true,target:1},
+      english_animation:{enabled:true,target:30},
+      english_listen:{enabled:true,target:1},
+      english_cards:{enabled:true,target:5},
+      poetry:{enabled:true,target:1},
+      literacy:{enabled:true,target:3},
+      math:{enabled:true,target:1}
+    },
+    tags:{
+      books_zh:[],books_en:[],books_math:[],books_science:[],
+      animation:[...POPULAR_ANIMATIONS],
+      listen_place:[{name:'早上8点'},{name:'午睡前'},{name:'车上去程'},{name:'车回程'},{name:'晚上睡前'}],
+      english_words:[],
+      poetry:[],
+      literacy:[],
+      math_tools:[]
+    },
+    history:{},
+    garden:{sunflowers:[],zombies:[],defeatedAt:null},
+    rewards:{claimed:[],customRewards:[
+      {name:'贴纸一张',cost:50,emoji:'⭐'},
+      {name:'看动画片30分钟',cost:100,emoji:'📺'},
+      {name:'去公园玩',cost:200,emoji:'🎡'},
+      {name:'周末游乐园',cost:500,emoji:'🎢'}
+    ]},
+    stats:{totalSunlight:0,totalSunflowers:0,totalDays:0,perfectDays:0,currentStreak:0,lastCheckDate:null,lastPerfectDate:null}
+  };
+}
+
+let state = loadState();
+let currentDate = todayStr();
+let currentView = 'base';
+let subTabs = {};
+
+function loadState(){
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);return Object.assign(defaultState(),s)}}catch(e){}
+  return defaultState();
+}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+
+function getDayData(date){
+  if(!state.history[date]){
+    state.history[date]={
+      books:{zh:[],en:[],math:[]},
+      english_animation:{items:[],minutes:0},
+      english_listen:{places:[]},
+      english_cards:{learned:[],review:[],mastered:[],weak:[]},
+      poetry:{review:[],new:[]},
+      literacy:{new:[],review:[],mastered:[],weak:[]},
+      math:{items:[]},
+      sunlight:0,
+      sunflowersProduced:0,
+      zombiesGenerated:0,
+      rewarded:{}
+    };
+    saveState();
+  }
+  return state.history[date];
+}
+
+// ==================== 工具函数 ====================
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.className='toast',2500);
+}
+
+function openModal(html){
+  document.getElementById('modalContent').innerHTML=html;
+  document.getElementById('modalMask').classList.add('show');
+}
+function closeModal(){document.getElementById('modalMask').classList.remove('show')}
+
+function addSunlight(amount,reason){
+  const data=getDayData(currentDate);
+  data.sunlight+=amount;
+  state.stats.totalSunlight+=amount;
+  // 每100阳光自动兑换向日葵
+  while(data.sunlight>=100){
+    data.sunlight-=100;
+    addSunflower(reason||'阳光兑换');
+    data.sunflowersProduced++;
+  }
+  saveState();
+  renderTopStats();
+  const sunEl=document.getElementById('sunlightTop');
+  sunEl.classList.add('fire');
+  setTimeout(()=>sunEl.classList.remove('fire'),800);
+}
+
+function addSunflower(from){
+  const emoji=PLANT_TYPES[Math.floor(Math.random()*PLANT_TYPES.length)];
+  state.garden.sunflowers.push({id:'sf_'+Date.now(),emoji,date:currentDate,from:from||'任务完成'});
+  state.stats.totalSunflowers++;
+  saveState();
+  renderTopStats();
+}
+
+function celebrate(msg){
+  const cel=document.getElementById('celebration');
+  const banner=document.getElementById('celebrationBanner');
+  banner.innerHTML=msg||'🎉 全部完成！';
+  cel.classList.add('show');
+  // 彩纸
+  let html='';
+  const colors=['#e74c3c','#f39c12','#f1c40f','#27ae60','#3498db','#9b59b6'];
+  for(let i=0;i<50;i++){
+    const left=Math.random()*100,delay=Math.random()*0.5,color=colors[i%6],size=6+Math.random()*8;
+    html+=`<div class="confetti" style="left:${left}%;top:-20px;background:${color};width:${size}px;height:${size}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${delay}s"></div>`;
+  }
+  cel.innerHTML=html+'<div class="celebration-banner">'+banner.innerHTML+'</div>';
+  setTimeout(()=>cel.classList.remove('show'),3000);
+}
+
+// ==================== 模块完成检查 ====================
+function checkModuleComplete(moduleKey){
+  const data=getDayData(currentDate);
+  const m=state.modules[moduleKey];
+  if(!m||!m.enabled) return false;
+  switch(moduleKey){
+    case 'books_zh': return data.books.zh.length>=m.target;
+    case 'books_en': return data.books.en.length>=m.target;
+    case 'books_math': return data.books.math.length>=m.target;
+    case 'books_science': return data.books.science.length>=m.target;
+    case 'english_animation': return data.english_animation.minutes>=m.target;
+    case 'english_listen': return data.english_listen.places.length>=m.target;
+    case 'english_cards': return (data.english_cards.learned.length+data.english_cards.review.length)>=m.target;
+    case 'poetry': return data.poetry.review.length>=m.target||data.poetry.new.length>=m.target;
+    case 'literacy': return (data.literacy.new.length+data.literacy.review.length)>=m.target;
+    case 'math': return data.math.items.length>=m.target;
+  }
+  return false;
+}
+
+function tryRewardModule(moduleKey){
+  const data=getDayData(currentDate);
+  if(!data.rewarded) data.rewarded={};
+  if(data.rewarded[moduleKey]) return;
+  if(checkModuleComplete(moduleKey)){
+    data.rewarded[moduleKey]=true;
+    addSunlight(20, getModuleName(moduleKey));
+    showToast('+20 ☀️ '+getModuleName(moduleKey)+'完成！','gold');
+    // 检查全部完成
+    checkAllComplete();
+    saveState();
+    renderBase();
+  }
+}
+
+function getModuleName(key){
+  const names={books_zh:'中文绘本',books_en:'英文绘本',books_math:'数学绘本',books_science:'科普绘本',
+    english_animation:'英语动画',english_listen:'英语熏听',english_cards:'认知卡',
+    poetry:'古诗打卡',literacy:'每日识字',math:'数学启蒙'};
+  return names[key]||key;
+}
+function getModuleIcon(key){
+  const icons={books_zh:'📕',books_en:'📗',books_math:'📘',books_science:'🔬',
+    english_animation:'🎬',english_listen:'👂',english_cards:'🃏',
+    poetry:'📜',literacy:'✏️',math:'🔢'};
+  return icons[key]||'📌';
+}
+
+function checkAllComplete(){
+  const data=getDayData(currentDate);
+  if(data.rewarded.allDone) return;
+  const enabledModules=Object.keys(state.modules).filter(k=>state.modules[k].enabled);
+  const allDone=enabledModules.every(k=>checkModuleComplete(k));
+  if(allDone && enabledModules.length>0){
+    data.rewarded.allDone=true;
+    addSunlight(50,'全天完成奖励');
+    addSunflower('全天完成奖励');
+    celebrate('🎉 全部完成！+50☀️ 奖励向日葵！');
+  }
+}
+
+// ==================== 视图切换 ====================
+function switchView(view){
+  currentView=view;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('view-'+view);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.querySelector('.nav-item[data-view="'+view+'"]');
+  if(nav) nav.classList.add('active');
+  renderView(view);
+}
+
+function renderView(view){
+  switch(view){
+    case 'base': renderBase(); break;
+    case 'books': renderBooks(); break;
+    case 'english': renderEnglish(); break;
+    case 'poetry': renderPoetry(); break;
+    case 'literacy': renderLiteracy(); break;
+    case 'math': renderMath(); break;
+    case 'plants': renderPlants(); break;
+    case 'stats': renderStats(); break;
+    case 'rewards': renderRewards(); break;
+  }
+}
+
+function renderTopStats(){
+  const data=getDayData(currentDate);
+  document.getElementById('sunlightVal').textContent=data.sunlight;
+  document.getElementById('sunflowerVal').textContent=state.garden.sunflowers.length;
+  document.getElementById('streakVal').textContent=state.stats.currentStreak;
+}
+
+// ==================== 基地视图 ====================
+function renderBase(){
+  const data=getDayData(currentDate);
+  const dt=parseDate(currentDate);
+  document.getElementById('todayDate').textContent=currentDate+' 星期'+WEEKDAYS[dt.getDay()];
+  document.getElementById('baseTitle').textContent=state.settings.baseName;
+  document.getElementById('baseName').textContent=state.settings.baseName;
+  document.getElementById('todaySunlight').textContent=data.sunlight;
+  document.getElementById('todaySunflower').textContent=data.sunflowersProduced;
+  document.getElementById('todayZombie').textContent=data.zombiesGenerated;
+  document.getElementById('todaySunlightList').textContent=data.sunlight;
+  renderBattlefield();
+  renderTaskList();
+  renderTopStats();
+}
+
+function renderBattlefield(){
+  const plants=state.garden.sunflowers;
+  const zombies=state.garden.zombies;
+  const plantsEl=document.getElementById('bfPlants');
+  const zombiesEl=document.getElementById('bfZombies');
+  plantsEl.innerHTML='';
+  const displayPlants=plants.slice(-6);
+  for(let i=0;i<6;i++){
+    const cell=document.createElement('div');
+    cell.className='plant-cell'+(i<displayPlants.length?'':' empty');
+    cell.textContent=i<displayPlants.length?displayPlants[i].emoji:'🌻';
+    plantsEl.appendChild(cell);
+  }
+  zombiesEl.innerHTML='';
+  const displayZombies=zombies.slice(-4);
+  for(let i=0;i<4;i++){
+    const cell=document.createElement('div');
+    if(i<displayZombies.length){
+      cell.className='zombie-cell walking';
+      cell.textContent=displayZombies[i].emoji;
+    }else{
+      cell.className='zombie-cell empty';
+      cell.textContent='🧟';
+    }
+    zombiesEl.appendChild(cell);
+  }
+  const status=document.getElementById('bfStatus');
+  if(zombies.length===0){
+    status.textContent='🛡️ 防线安全';
+    status.style.background='rgba(0,0,0,.4)';
+  }else if(zombies.length<plants.length){
+    status.textContent='⚠️ 僵尸出没 '+zombies.length+'只';
+    status.style.background='var(--warning)';
+  }else{
+    status.textContent='🚨 危险！';
+    status.style.background='var(--danger)';
+  }
+}
+
+function renderTaskList(){
+  const data=getDayData(currentDate);
+  const container=document.getElementById('taskListContainer');
+  const moduleKeys=Object.keys(state.modules);
+  const enabledCount=moduleKeys.filter(k=>state.modules[k].enabled).length;
+  const doneCount=moduleKeys.filter(k=>state.modules[k].enabled&&checkModuleComplete(k)).length;
+  document.getElementById('taskProgress').textContent=doneCount+'/'+enabledCount;
+  let html='';
+  moduleKeys.forEach(key=>{
+    const m=state.modules[key];
+    const done=checkModuleComplete(key);
+    const cls=done?'done':(m.enabled?'pending':'disabled');
+    const desc=getModuleDesc(key);
+    const reward=data.rewarded&&data.rewarded[key]?'已得 +20':'完成 +20';
+    const toggleBtn=m.enabled?'<button class="toggle-btn on" onclick="toggleModule(\''+key+'\')">开启</button>':'<button class="toggle-btn" onclick="toggleModule(\''+key+'\')">暂停</button>';
+    html+=`<div class="task-item ${cls}" onclick="switchView('${getModuleView(key)}')">
+      <span class="icon">${getModuleIcon(key)}</span>
+      <div class="content"><div class="name">${getModuleName(key)}</div><div class="desc">${desc}</div></div>
+      <span class="reward">${reward}</span>
+      ${toggleBtn}
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+
+function getModuleDesc(key){
+  const data=getDayData(currentDate);
+  const m=state.modules[key];
+  switch(key){
+    case 'books_zh': return `今日 ${data.books.zh.length}/${m.target} 本`;
+    case 'books_en': return `今日 ${data.books.en.length}/${m.target} 本`;
+    case 'books_math': return `今日 ${data.books.math.length}/${m.target} 本`;
+    case 'books_science': return `今日 ${data.books.science.length}/${m.target} 本`;
+    case 'english_animation': return `今日 ${data.english_animation.minutes}/${m.target} 分钟`;
+    case 'english_listen': return `今日 ${data.english_listen.places.length}/${m.target} 次`;
+    case 'english_cards': return `今日 ${data.english_cards.learned.length+data.english_cards.review.length}/${m.target} 张`;
+    case 'poetry': return `今日 ${data.poetry.review.length+data.poetry.new.length}/${m.target} 首`;
+    case 'literacy': return `今日 ${data.literacy.new.length+data.literacy.review.length}/${m.target} 字`;
+    case 'math': return `今日 ${data.math.items.length}/${m.target} 项`;
+  }
+  return '';
+}
+function getModuleView(key){
+  const map={books_zh:'books',books_en:'books',books_math:'books',books_science:'books',
+    english_animation:'english',english_listen:'english',english_cards:'english',
+    poetry:'poetry',literacy:'literacy',math:'math'};
+  return map[key]||'base';
+}
+
+function toggleModule(key){
+  state.modules[key].enabled=!state.modules[key].enabled;
+  saveState();
+  renderTaskList();
+  updateNavDots();
+  showToast(state.modules[key].enabled?'已开启'+getModuleName(key):'已暂停'+getModuleName(key),'success');
+}
+
+function updateNavDots(){
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    const view=item.dataset.view;
+    const key=VIEW_TO_MODULE[view];
+    if(key){
+      const enabled=Array.isArray(key)?key.some(k=>state.modules[k].enabled):state.modules[key]&&state.modules[k].enabled;
+      item.classList.toggle('enabled',enabled);
+    }else{
+      item.classList.add('enabled');
+    }
+  });
+}
+const VIEW_TO_MODULE={
+  books:['books_zh','books_en','books_math','books_science'],
+  english:['english_animation','english_listen','english_cards'],
+  poetry:'poetry',literacy:'literacy',math:'math'
+};
+
+// ==================== 绘本视图 ====================
+function renderBooks(){
+  const view=document.getElementById('view-books');
+  view.innerHTML=`
+    <div class="module-header">
+      <h2>📚 绘本阅读 <button class="module-toggle ${state.modules.books_zh.enabled||state.modules.books_en.enabled||state.modules.books_math.enabled||state.modules.books_science.enabled?'on':'off'}" onclick="toggleBooksAll()">${state.modules.books_zh.enabled||state.modules.books_en.enabled||state.modules.books_math.enabled||state.modules.books_science.enabled?'已开启':'已暂停'}</button></h2>
+      <p>每天阅读绘本，可手动添加或选择热门预设。完成当日目标 +20 阳光。</p>
+    </div>
+    <div class="sub-tab-bar">
+      <div class="sub-tab ${(!subTabs.books||subTabs.books==='zh')?'active':''}" onclick="switchSubTab('books','zh',this)">📕 中文绘本</div>
+      <div class="sub-tab ${subTabs.books==='en'?'active':''}" onclick="switchSubTab('books','en',this)">📗 英文绘本</div>
+      <div class="sub-tab ${subTabs.books==='math'?'active':''}" onclick="switchSubTab('books','math',this)">📘 数学绘本</div>
+      <div class="sub-tab ${subTabs.books==='science'?'active':''}" onclick="switchSubTab('books','science',this)">🔬 科普绘本</div>
+    </div>
+    <div id="booksPanel"></div>
+  `;
+  renderBooksPanel(subTabs.books||'zh');
+}
+
+function toggleBooksAll(){
+  const on=!(state.modules.books_zh.enabled||state.modules.books_en.enabled||state.modules.books_math.enabled||state.modules.books_science.enabled);
+  state.modules.books_zh.enabled=on;
+  state.modules.books_en.enabled=on;
+  state.modules.books_math.enabled=on;
+  state.modules.books_science.enabled=on;
+  saveState();renderBooks();updateNavDots();renderBase();
+}
+
+function switchSubTab(view,tab,el){
+  subTabs[view]=tab;
+  document.querySelectorAll('#view-'+view+' .sub-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else { const tabs=document.querySelectorAll('#view-'+view+' .sub-tab'); if(tabs.length) tabs[0].classList.add('active'); }
+  if(view==='books') renderBooksPanel(tab);
+  else if(view==='english') renderEnglishPanel(tab);
+}
+
+function renderBooksPanel(type){
+  const panel=document.getElementById('booksPanel');
+  if(!panel) return;
+  const key='books_'+type;
+  const m=state.modules[key];
+  const data=getDayData(currentDate);
+  const readBooks=data.books[type]||[];
+  const userTags=state.tags[key]||[];
+  const popular=POPULAR_BOOKS[type]||[];
+  let html=`
+    <div class="add-row">
+      <input type="text" id="newBookName_${type}" placeholder="输入绘本名称">
+      <input type="text" id="newBookEmoji_${type}" placeholder="emoji" style="flex:0 0 60px" maxlength="2">
+      <button onclick="addBook('${type}')">➕ 添加</button>
+    </div>
+    <div class="module-header" style="padding:10px;margin-bottom:8px">
+      <p>📌 今日目标：<b>${m.target}</b> 本 | 已读：<b>${readBooks.length}</b> 本 ${m.enabled?'':'<span class="badge danger">已暂停</span>'}</p>
+    </div>
+  `;
+  if(userTags.length>0||popular.length>0){
+    html+='<div class="section-title">🏷️ 快速选择</div><div class="tag-cloud">';
+    popular.forEach(b=>{
+      const isRead=readBooks.includes(b.name);
+      html+=`<div class="tag ${isRead?'selected':''}" onclick="toggleBookRead('${type}','${b.name.replace(/'/g,"\\'")}')">${b.emoji} ${b.name}</div>`;
+    });
+    userTags.forEach(b=>{
+      const isRead=readBooks.includes(b.name);
+      html+=`<div class="tag ${isRead?'selected':''}" onclick="toggleBookRead('${type}','${b.name.replace(/'/g,"\\'")}')">${b.emoji||'📖'} ${b.name}<span class="tag-close" onclick="event.stopPropagation();deleteBookTag('${type}','${b.name.replace(/'/g,"\\'")}')">✕</span></div>`;
+    });
+    html+='</div>';
+  }
+  html+='<div class="section-title">📖 今日已读 <span class="count">'+readBooks.length+'</span></div>';
+  if(readBooks.length===0){
+    html+='<div class="empty-tip">还没有阅读记录，点击上方标签或添加绘本开始吧！</div>';
+  }else{
+    readBooks.forEach(name=>{
+      html+=`<div class="list-item done"><input type="checkbox" checked onchange="toggleBookRead('${type}','${name.replace(/'/g,"\\'")}')"><span class="text">${name}</span></div>`;
+    });
+  }
+  panel.innerHTML=html;
+}
+
+function addBook(type){
+  const nameInput=document.getElementById('newBookName_'+type);
+  const emojiInput=document.getElementById('newBookEmoji_'+type);
+  const name=nameInput.value.trim();
+  if(!name){showToast('请输入绘本名称','danger');return}
+  const emoji=emojiInput.value.trim()||'📖';
+  if(!state.tags['books_'+type]) state.tags['books_'+type]=[];
+  if(!state.tags['books_'+type].some(b=>b.name===name)){
+    state.tags['books_'+type].push({name,emoji});
+    saveState();
+  }
+  nameInput.value='';emojiInput.value='';
+  renderBooksPanel(type);
+  showToast('已添加到绘本库','success');
+}
+
+function deleteBookTag(type,name){
+  state.tags['books_'+type]=state.tags['books_'+type].filter(b=>b.name!==name);
+  // 同时从已读列表移除
+  const data=getDayData(currentDate);
+  data.books[type]=data.books[type].filter(n=>n!==name);
+  saveState();
+  renderBooksPanel(type);
+  renderBase();
+}
+
+function toggleBookRead(type,name){
+  const data=getDayData(currentDate);
+  const idx=data.books[type].indexOf(name);
+  if(idx>=0){
+    data.books[type].splice(idx,1);
+  }else{
+    data.books[type].push(name);
+    showToast('📚 读完《'+name+'》','success');
+  }
+  saveState();
+  tryRewardModule('books_'+type);
+  renderBooksPanel(type);
+  renderBase();
+}
+
+// ==================== 英语视图 ====================
+function renderEnglish(){
+  const view=document.getElementById('view-english');
+  view.innerHTML=`
+    <div class="module-header">
+      <h2>🔤 英语启蒙</h2>
+      <p>动画、熏听、认知卡三大模块，全面磨耳朵。每完成一个子栏目 +20 阳光。</p>
+    </div>
+    <div class="sub-tab-bar">
+      <div class="sub-tab ${(!subTabs.english||subTabs.english==='animation')?'active':''}" onclick="switchSubTab('english','animation',this)">🎬 动画</div>
+      <div class="sub-tab ${subTabs.english==='listen'?'active':''}" onclick="switchSubTab('english','listen',this)">👂 熏听</div>
+      <div class="sub-tab ${subTabs.english==='cards'?'active':''}" onclick="switchSubTab('english','cards',this)">🃏 认知卡</div>
+    </div>
+    <div id="englishPanel"></div>
+  `;
+  renderEnglishPanel(subTabs.english||'animation');
+}
+
+function renderEnglishPanel(tab){
+  const panel=document.getElementById('englishPanel');
+  if(!panel) return;
+  if(tab==='animation') renderAnimationPanel(panel);
+  else if(tab==='listen') renderListenPanel(panel);
+  else if(tab==='cards') renderCardsPanel(panel);
+}
+
+function renderAnimationPanel(panel){
+  const data=getDayData(currentDate);
+  const m=state.modules.english_animation;
+  let html=`
+    <div class="module-header" style="padding:10px;margin-bottom:8px">
+      <p>🎬 今日目标：<b>${m.target}</b> 分钟 | 已看：<b>${data.english_animation.minutes}</b> 分钟 ${m.enabled?'':'<span class="badge danger">已暂停</span>'}</p>
+    </div>
+    <div class="add-row">
+      <input type="text" id="newAnimName" placeholder="动画名称">
+      <input type="number" id="newAnimEp" placeholder="集数" style="flex:0 0 60px" min="1" value="1">
+      <input type="number" id="newAnimDur" placeholder="分钟" style="flex:0 0 60px" min="1" value="5">
+      <button onclick="addAnimationLog()">➕ 打卡</button>
+    </div>
+  `;
+  // 标签库
+  const animTags=state.tags.animation||[];
+  if(animTags.length>0){
+    html+='<div class="section-title">🏷️ 快速选择动画</div><div class="tag-cloud">';
+    animTags.forEach(a=>{
+      html+=`<div class="tag" onclick="quickAddAnim('${a.name.replace(/'/g,"\\'")}')">${a.name}</div>`;
+    });
+    html+='</div>';
+  }
+  // 今日打卡
+  html+=`<div class="section-title">📋 今日打卡 <span class="count">${data.english_animation.items.length}</span></div>`;
+  if(data.english_animation.items.length===0){
+    html+='<div class="empty-tip">还没有打卡记录，输入动画名称和集数开始吧！</div>';
+  }else{
+    data.english_animation.items.forEach((item,idx)=>{
+      html+=`<div class="list-item done"><input type="checkbox" checked onchange="removeAnimLog(${idx})"><span class="text">${item.name} 第${item.episode}集</span><span class="meta">${item.duration}分钟</span></div>`;
+    });
+  }
+  panel.innerHTML=html;
+}
+
+function addAnimationLog(){
+  const nameInput=document.getElementById('newAnimName');
+  const epInput=document.getElementById('newAnimEp');
+  const durInput=document.getElementById('newAnimDur');
+  const name=nameInput.value.trim();
+  if(!name){showToast('请输入动画名称','danger');return}
+  const episode=parseInt(epInput.value)||1;
+  const duration=parseInt(durInput.value)||5;
+  const data=getDayData(currentDate);
+  data.english_animation.items.push({name,episode,duration});
+  data.english_animation.minutes+=duration;
+  // 加入标签库
+  if(!state.tags.animation.some(a=>a.name===name)){
+    state.tags.animation.push({name});
+  }
+  saveState();
+  nameInput.value='';epInput.value='1';durInput.value='5';
+  tryRewardModule('english_animation');
+  renderAnimationPanel(document.getElementById('englishPanel'));
+  renderBase();
+}
+
+function quickAddAnim(name){
+  document.getElementById('newAnimName').value=name;
+}
+
+function removeAnimLog(idx){
+  const data=getDayData(currentDate);
+  const item=data.english_animation.items[idx];
+  if(item){
+    data.english_animation.minutes=Math.max(0,data.english_animation.minutes-item.duration);
+    data.english_animation.items.splice(idx,1);
+    saveState();
+    renderAnimationPanel(document.getElementById('englishPanel'));
+    renderBase();
+  }
+}
+
+function renderListenPanel(panel){
+  const data=getDayData(currentDate);
+  const m=state.modules.english_listen;
+  let html=`
+    <div class="module-header" style="padding:10px;margin-bottom:8px">
+      <p>👂 今日目标：<b>${m.target}</b> 次 | 已完成：<b>${data.english_listen.places.length}</b> 次 ${m.enabled?'':'<span class="badge danger">已暂停</span>'}</p>
+    </div>
+    <div class="add-row">
+      <input type="text" id="newListenPlace" placeholder="时间或地点（如 早上8点、午睡前）">
+      <button onclick="addListenPlace()">➕ 添加标签</button>
+    </div>
+  `;
+  const places=state.tags.listen_place||[];
+  const checked=data.english_listen.places||[];
+  html+='<div class="section-title">🏷️ 熏听标签</div><div class="tag-cloud">';
+  places.forEach(p=>{
+    const isChecked=checked.includes(p.name);
+    html+=`<div class="tag ${isChecked?'selected':''}" onclick="toggleListenPlace('${p.name.replace(/'/g,"\\'")}')">${isChecked?'✅':'⏰'} ${p.name}<span class="tag-close" onclick="event.stopPropagation();deleteListenTag('${p.name.replace(/'/g,"\\'")}')">✕</span></div>`;
+  });
+  html+='</div>';
+  html+=`<div class="section-title">📋 今日已熏听 <span class="count">${checked.length}</span></div>`;
+  if(checked.length===0){
+    html+='<div class="empty-tip">点击上方标签记录熏听时间！</div>';
+  }
+  panel.innerHTML=html;
+}
+
+function addListenPlace(){
+  const input=document.getElementById('newListenPlace');
+  const name=input.value.trim();
+  if(!name){showToast('请输入时间或地点','danger');return}
+  if(!state.tags.listen_place.some(p=>p.name===name)){
+    state.tags.listen_place.push({name});
+    saveState();
+  }
+  input.value='';
+  renderListenPanel(document.getElementById('englishPanel'));
+  showToast('已添加熏听标签','success');
+}
+
+function toggleListenPlace(name){
+  const data=getDayData(currentDate);
+  const idx=data.english_listen.places.indexOf(name);
+  if(idx>=0){
+    data.english_listen.places.splice(idx,1);
+  }else{
+    data.english_listen.places.push(name);
+    showToast('👂 '+name+' 熏听完成','success');
+  }
+  saveState();
+  tryRewardModule('english_listen');
+  renderListenPanel(document.getElementById('englishPanel'));
+  renderBase();
+}
+
+function deleteListenTag(name){
+  state.tags.listen_place=state.tags.listen_place.filter(p=>p.name!==name);
+  const data=getDayData(currentDate);
+  data.english_listen.places=data.english_listen.places.filter(p=>p!==name);
+  saveState();
+  renderListenPanel(document.getElementById('englishPanel'));
+  renderBase();
+}
+
+function renderCardsPanel(panel){
+  const data=getDayData(currentDate);
+  const m=state.modules.english_cards;
+  let html=`
+    <div class="module-header" style="padding:10px;margin-bottom:8px">
+      <p>🃏 今日目标：<b>${m.target}</b> 张 | 已完成：<b>${data.english_cards.learned.length+data.english_cards.review.length}</b> 张 ${m.enabled?'':'<span class="badge danger">已暂停</span>'}</p>
+    </div>
+    <div class="add-row">
+      <input type="text" id="newWord" placeholder="单词或短语">
+      <button onclick="addWord()">➕ 添加单词</button>
+    </div>
+  `;
+  const words=state.tags.english_words||[];
+  if(words.length===0){
+    html+='<div class="empty-tip">还没有单词库，添加一些单词开始学习吧！</div>';
+  }else{
+    html+='<div class="four-col">';
+    html+=renderWordColumn('今日学习','learning',words.filter(w=>w.status==='learning'),data.english_cards.learned);
+    html+=renderWordColumn('今日复习','review',words.filter(w=>w.status==='review'),data.english_cards.review);
+    html+=renderWordColumn('熟练掌握','mastered',words.filter(w=>w.status==='mastered'),[]);
+    html+=renderWordColumn('需巩固','weak',words.filter(w=>w.status==='weak'),[]);
+    html+='</div>';
+  }
+  panel.innerHTML=html;
+}
+
+function renderWordColumn(title,cls,words,todayDone){
+  const count=todayDone?todayDone.length:words.length;
+  let html=`<div class="col-card ${cls}"><h4>${title} <span class="badge">${count}</span></h4>`;
+  if(cls==='learning'||cls==='review'){
+    html+=`<div class="count-big">${count}</div>`;
+    html+='<div class="chips">';
+    words.forEach(w=>{
+      const done=todayDone.includes(w.word);
+      html+=`<span class="chip" style="${done?'background:var(--success-light);color:var(--success);text-decoration:line-through':''}" onclick="toggleWordToday('${cls}','${w.word.replace(/'/g,"\\'")}')">${w.word}${done?' ✅':''}</span>`;
+    });
+    html+='</div>';
+  }else{
+    html+=`<div class="count-big">${words.length}</div>`;
+    html+='<div class="chips">';
+    words.forEach(w=>{
+      html+=`<span class="chip">${w.word}</span>`;
+    });
+    html+='</div>';
+  }
+  // 移动按钮
+  html+='<div class="move-btns">';
+  if(cls!=='mastered') html+=`<button onclick="moveWords('${cls}','mastered')">→熟练</button>`;
+  if(cls!=='weak') html+=`<button onclick="moveWords('${cls}','weak')">→巩固</button>`;
+  if(cls!=='learning') html+=`<button onclick="moveWords('${cls}','learning')">→学习</button>`;
+  if(cls!=='review') html+=`<button onclick="moveWords('${cls}','review')">→复习</button>`;
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
+function addWord(){
+  const input=document.getElementById('newWord');
+  const word=input.value.trim();
+  if(!word){showToast('请输入单词','danger');return}
+  if(!state.tags.english_words.some(w=>w.word===word)){
+    state.tags.english_words.push({word,status:'learning'});
+    saveState();
+  }
+  input.value='';
+  renderCardsPanel(document.getElementById('englishPanel'));
+  showToast('已添加单词','success');
+}
+
+function toggleWordToday(type,word){
+  const data=getDayData(currentDate);
+  const list=type==='learning'?data.english_cards.learned:data.english_cards.review;
+  const idx=list.indexOf(word);
+  if(idx>=0){
+    list.splice(idx,1);
+  }else{
+    list.push(word);
+    showToast('🃏 '+word+' 完成！','success');
+  }
+  saveState();
+  tryRewardModule('english_cards');
+  renderCardsPanel(document.getElementById('englishPanel'));
+  renderBase();
+}
+
+function moveWords(from,to){
+  const words=state.tags.english_words.filter(w=>w.status===from);
+  words.forEach(w=>w.status=to);
+  saveState();
+  renderCardsPanel(document.getElementById('englishPanel'));
+  showToast('已移动到'+({learning:'学习',review:'复习',mastered:'熟练',weak:'巩固'}[to]),'success');
+}
+
+// ==================== 古诗视图（艾宾浩斯）====================
+function renderPoetry(){
+  const view=document.getElementById('view-poetry');
+  const data=getDayData(currentDate);
+  const poems=state.tags.poetry||[];
+  let html=`
+    <div class="module-header">
+      <h2>📜 每日古诗打卡 <button class="module-toggle ${state.modules.poetry.enabled?'on':'off'}" onclick="toggleSimpleModule('poetry')">${state.modules.poetry.enabled?'已开启':'已暂停'}</button></h2>
+      <p>艾宾浩斯遗忘曲线自动排程复习。输入一次，形成标签，按周期复习。</p>
+    </div>
+    <div class="add-row">
+      <input type="text" id="newPoemName" placeholder="古诗名称（如 静夜思）">
+      <input type="text" id="newPoemAuthor" placeholder="作者" style="flex:0 0 80px">
+      <input type="number" id="newPoemNo" placeholder="序号" style="flex:0 0 50px" min="1">
+      <button onclick="addPoem()">➕ 添加</button>
+    </div>
+  `;
+  // 艾宾浩斯表格
+  if(poems.length===0){
+    html+='<div class="empty-tip">还没有古诗，添加第一首开始艾宾浩斯复习之旅吧！</div>';
+  }else{
+    html+='<div class="section-title">📅 艾宾浩斯复习表</div>';
+    html+='<table class="ebbinghaus"><thead><tr><th>诗名</th>';
+    EB_INTERVALS.forEach((d,i)=>{html+=`<th>${d}天</th>`});
+    html+='<th>状态</th></tr></thead><tbody>';
+    poems.forEach(poem=>{
+      html+=`<tr><td class="name-cell">${poem.name}<br><small style="font-weight:normal;color:var(--text-muted)">${poem.author||''} ${poem.no?'#'+poem.no:''}</small></td>`;
+      const addedDate=poem.addedDate;
+      EB_INTERVALS.forEach((interval,idx)=>{
+        const reviewDate=dateStrAdd(addedDate,interval);
+        const isToday=reviewDate===currentDate;
+        const isPast=reviewDate<currentDate;
+        const isFuture=reviewDate>currentDate;
+        const done=poem.reviews&&poem.reviews[idx];
+        let cls='';
+        if(done) cls='done-cell';
+        else if(isToday) cls='today-col';
+        else if(isPast) cls='overdue-cell';
+        else cls='future-cell';
+        const dateLabel=reviewDate.slice(5);
+        html+=`<td class="${cls}"><div class="eb-check" onclick="togglePoemReview(${poems.indexOf(poem)},${idx})">${done?'✅':(isToday?'⭕':(isPast?'❗':''))}</div><small>${dateLabel}</small></td>`;
+      });
+      const status=poem.status||'learning';
+      const statusText={learning:'学习中',mastered:'已掌握',weak:'需巩固'}[status]||'学习中';
+      html+=`<td><span class="badge ${status==='mastered'?'success':status==='weak'?'danger':''}">${statusText}</span></td>`;
+      html+='</tr>';
+    });
+    html+='</tbody></table>';
+    // 今日待复习
+    const todayReview=poems.filter(p=>EB_INTERVALS.some((d,i)=>{
+      const rd=dateStrAdd(p.addedDate,d);
+      return rd===currentDate&&!(p.reviews&&p.reviews[i]);
+    }));
+    html+=`<div class="section-title">📌 今日待复习 <span class="count">${todayReview.length}</span></div>`;
+    if(todayReview.length===0){
+      html+='<div class="empty-tip">今日无复习任务，可学习新古诗！</div>';
+    }else{
+      todayReview.forEach(p=>{
+        html+=`<div class="list-item ${data.poetry.review.includes(p.name)?'done':''}"><input type="checkbox" ${data.poetry.review.includes(p.name)?'checked':''} onchange="togglePoemToday('${p.name.replace(/'/g,"\\'")}')"><span class="text">${p.name} - ${p.author||''}</span></div>`;
+      });
+    }
+  }
+  view.innerHTML=html;
+}
+
+function dateStrAdd(dateStr,days){
+  const d=parseDate(dateStr);
+  d.setDate(d.getDate()+days);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function addPoem(){
+  const nameInput=document.getElementById('newPoemName');
+  const authorInput=document.getElementById('newPoemAuthor');
+  const noInput=document.getElementById('newPoemNo');
+  const name=nameInput.value.trim();
+  if(!name){showToast('请输入古诗名称','danger');return}
+  const author=authorInput.value.trim();
+  const no=parseInt(noInput.value)||0;
+  if(!state.tags.poetry) state.tags.poetry=[];
+  state.tags.poetry.push({name,author,no,addedDate:currentDate,reviews:[],status:'learning'});
+  saveState();
+  nameInput.value='';authorInput.value='';noInput.value='';
+  renderPoetry();
+  showToast('📜 已添加《'+name+'》','success');
+}
+
+function togglePoemReview(poemIdx,reviewIdx){
+  const poem=state.tags.poetry[poemIdx];
+  if(!poem.reviews) poem.reviews=[];
+  poem.reviews[reviewIdx]=!poem.reviews[reviewIdx];
+  // 检查是否全部完成
+  if(poem.reviews.filter(r=>r).length===EB_INTERVALS.length){
+    poem.status='mastered';
+    showToast('🎉 《'+poem.name+'》已熟练掌握！','gold');
+  }
+  saveState();
+  renderPoetry();
+}
+
+function togglePoemToday(name){
+  const data=getDayData(currentDate);
+  const idx=data.poetry.review.indexOf(name);
+  if(idx>=0){
+    data.poetry.review.splice(idx,1);
+  }else{
+    data.poetry.review.push(name);
+    showToast('📜 复习完成！','success');
+  }
+  saveState();
+  tryRewardModule('poetry');
+  renderPoetry();
+  renderBase();
+}
+
+function toggleSimpleModule(key){
+  state.modules[key].enabled=!state.modules[key].enabled;
+  saveState();renderView(currentView);updateNavDots();renderBase();
+}
+
+// ==================== 识字视图 ====================
+function renderLiteracy(){
+  const view=document.getElementById('view-literacy');
+  const chars=state.tags.literacy||[];
+  let html=`
+    <div class="module-header">
+      <h2>✏️ 每日识字 <button class="module-toggle ${state.modules.literacy.enabled?'on':'off'}" onclick="toggleSimpleModule('literacy')">${state.modules.literacy.enabled?'已开启':'已暂停'}</button></h2>
+      <p>手动输入汉字，按艾宾浩斯曲线复习。分今日新学/复习/熟练/需巩固。</p>
+    </div>
+    <div class="add-row">
+      <input type="text" id="newChar" placeholder="输入汉字（可多个）" maxlength="10">
+      <button onclick="addChar()">➕ 添加</button>
+    </div>
+  `;
+  if(chars.length===0){
+    html+='<div class="empty-tip">还没有识字记录，添加第一个汉字开始吧！</div>';
+  }else{
+    const data=getDayData(currentDate);
+    html+='<div class="four-col">';
+    // 今日新学
+    const todayNew=chars.filter(c=>c.addedDate===currentDate);
+    html+=renderCharColumn('今日新学','learning',todayNew,data.literacy.new,'new');
+    // 今日复习（艾宾浩斯到期）
+    const todayReview=chars.filter(c=>c.addedDate!==currentDate && EB_INTERVALS.some((d,i)=>{
+      const rd=dateStrAdd(c.addedDate,d);
+      return rd===currentDate&&!(c.reviews&&c.reviews[i]);
+    }));
+    html+=renderCharColumn('今日复习','review',todayReview,data.literacy.review,'review');
+    // 熟练掌握
+    const mastered=chars.filter(c=>c.status==='mastered');
+    html+=renderCharColumn('熟练掌握','mastered',mastered,[],'mastered');
+    // 需巩固
+    const weak=chars.filter(c=>c.status==='weak');
+    html+=renderCharColumn('需巩固','weak',weak,[],'weak');
+    html+='</div>';
+  }
+  view.innerHTML=html;
+}
+
+function renderCharColumn(title,cls,items,todayDone,colType){
+  let html=`<div class="col-card ${cls}"><h4>${title} <span class="badge">${cls==='mastered'||cls==='weak'?items.length:todayDone.length}</span></h4>`;
+  html+=`<div class="count-big">${cls==='mastered'||cls==='weak'?items.length:todayDone.length}</div>`;
+  html+='<div class="chips">';
+  if(cls==='learning'||cls==='review'){
+    items.forEach(c=>{
+      const done=todayDone.includes(c.char);
+      html+=`<span class="chip" style="${done?'background:var(--success-light);color:var(--success)':''}" onclick="toggleCharToday('${colType}','${c.char}')">${c.char}</span>`;
+    });
+  }else{
+    items.forEach(c=>{
+      html+=`<span class="chip">${c.char}</span>`;
+    });
+  }
+  html+='</div>';
+  if(items.length>0){
+    html+='<div class="move-btns">';
+    if(cls!=='mastered') html+=`<button onclick="moveChars('${cls}','mastered')">→熟练</button>`;
+    if(cls!=='weak') html+=`<button onclick="moveChars('${cls}','weak')">→巩固</button>`;
+    html+='</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function addChar(){
+  const input=document.getElementById('newChar');
+  const val=input.value.trim();
+  if(!val){showToast('请输入汉字','danger');return}
+  let added=0;
+  for(const ch of val){
+    if(!state.tags.literacy.some(c=>c.char===ch)){
+      state.tags.literacy.push({char:ch,addedDate:currentDate,reviews:[],status:'learning'});
+      added++;
+    }
+  }
+  saveState();
+  input.value='';
+  renderLiteracy();
+  if(added>0) showToast(`✏️ 已添加 ${added} 个字`,'success');
+}
+
+function toggleCharToday(type,char){
+  const data=getDayData(currentDate);
+  const list=type==='new'?data.literacy.new:data.literacy.review;
+  const idx=list.indexOf(char);
+  if(idx>=0){
+    list.splice(idx,1);
+  }else{
+    list.push(char);
+    showToast('✏️ '+char+' 完成！','success');
+  }
+  saveState();
+  tryRewardModule('literacy');
+  renderLiteracy();
+  renderBase();
+}
+
+function moveChars(from,to){
+  const chars=state.tags.literacy.filter(c=>c.status===from);
+  chars.forEach(c=>c.status=to);
+  saveState();
+  renderLiteracy();
+  showToast('已移动到'+({learning:'新学',review:'复习',mastered:'熟练',weak:'巩固'}[to]),'success');
+}
+
+// ==================== 数学视图 ====================
+function renderMath(){
+  const view=document.getElementById('view-math');
+  const data=getDayData(currentDate);
+  const m=state.modules.math;
+  const customTools=state.tags.math_tools||[];
+  let html=`
+    <div class="module-header">
+      <h2>🔢 数学启蒙 <button class="module-toggle ${m.enabled?'on':'off'}" onclick="toggleSimpleModule('math')">${m.enabled?'已开启':'已暂停'}</button></h2>
+      <p>选择教具完成今日打卡。目标：<b>${m.target}</b> 项 | 已完成：<b>${data.math.items.length}</b> 项</p>
+    </div>
+    <div class="section-title">🏷️ 选择教具</div>
+    <div class="card-grid">
+  `;
+  MATH_TOOLS.forEach(tool=>{
+    const isDone=data.math.items.includes(tool);
+    const emojis={'认识数字':'1️⃣','数物对应':'🔢','计算':'➕','圆点卡':'🔴','磁力积木':'🧲','十格阵':'🔟','百数板':'💯'};
+    html+=`<div class="mini-card ${isDone?'selected':''}" onclick="toggleMathItem('${tool}')"><span class="emoji">${emojis[tool]||'🧮'}</span>${tool}${isDone?' ✅':''}</div>`;
+  });
+  customTools.forEach(tool=>{
+    const isDone=data.math.items.includes(tool.name);
+    html+=`<div class="mini-card ${isDone?'selected':''}" onclick="toggleMathItem('${tool.name.replace(/'/g,"\\'")}')"><span class="emoji">${tool.emoji||'🧮'}</span>${tool.name}${isDone?' ✅':''}<span style="position:absolute;top:2px;right:4px;color:var(--danger);font-size:1em;cursor:pointer" onclick="event.stopPropagation();deleteMathTool('${tool.name.replace(/'/g,"\\'")}')">✕</span></div>`;
+  });
+  html+='</div>';
+  html+=`<div class="add-row">
+    <input type="text" id="newMathTool" placeholder="其他教具名称">
+    <input type="text" id="newMathEmoji" placeholder="emoji" style="flex:0 0 60px" maxlength="2">
+    <button onclick="addMathTool()">➕ 添加教具</button>
+  </div>`;
+  view.innerHTML=html;
+}
+
+function toggleMathItem(name){
+  const data=getDayData(currentDate);
+  const idx=data.math.items.indexOf(name);
+  if(idx>=0){
+    data.math.items.splice(idx,1);
+  }else{
+    data.math.items.push(name);
+    showToast('🔢 '+name+' 完成！','success');
+  }
+  saveState();
+  tryRewardModule('math');
+  renderMath();
+  renderBase();
+}
+
+function addMathTool(){
+  const nameInput=document.getElementById('newMathTool');
+  const emojiInput=document.getElementById('newMathEmoji');
+  const name=nameInput.value.trim();
+  if(!name){showToast('请输入教具名称','danger');return}
+  const emoji=emojiInput.value.trim()||'🧮';
+  if(!state.tags.math_tools.some(t=>t.name===name)){
+    state.tags.math_tools.push({name,emoji});
+    saveState();
+  }
+  nameInput.value='';emojiInput.value='';
+  renderMath();
+  showToast('已添加教具','success');
+}
+
+function deleteMathTool(name){
+  state.tags.math_tools=state.tags.math_tools.filter(t=>t.name!==name);
+  const data=getDayData(currentDate);
+  data.math.items=data.math.items.filter(n=>n!==name);
+  saveState();
+  renderMath();
+  renderBase();
+}
+
+// ==================== 植物视图 ====================
+function renderPlants(){
+  const view=document.getElementById('view-plants');
+  const plants=state.garden.sunflowers;
+  let html=`
+    <div class="module-header">
+      <h2>🌻 我的向日葵花园</h2>
+      <p>共收集 <b>${plants.length}</b> 朵向日葵，总计 <b>${state.stats.totalSunlight}</b> 阳光</p>
+    </div>
+  `;
+  if(plants.length===0){
+    html+='<div class="empty-tip">还没有向日葵，完成任务收集阳光吧！</div>';
+  }else{
+    html+='<div class="plant-grid">';
+    [...plants].reverse().forEach(p=>{
+      html+=`<div class="plant-card"><div class="emoji">${p.emoji}</div><div class="date">${p.date}</div><div class="from">${p.from}</div></div>`;
+    });
+    html+='</div>';
+  }
+  view.innerHTML=html;
+}
+
+// ==================== 统计视图 ====================
+function renderStats(){
+  const view=document.getElementById('view-stats');
+  const stats=state.stats;
+  let html=`
+    <div class="module-header">
+      <h2>📊 打卡统计</h2>
+      <p>查看你的坚持与成长</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="v">${stats.currentStreak}</div><div class="l">🔥 连续天数</div></div>
+      <div class="stat-card purple"><div class="v">${stats.perfectDays}</div><div class="l">⭐ 完美天数</div></div>
+      <div class="stat-card warning"><div class="v">${stats.totalSunlight}</div><div class="l">☀️ 总阳光</div></div>
+      <div class="stat-card"><div class="v">${stats.totalSunflowers}</div><div class="l">🌻 总向日葵</div></div>
+    </div>
+  `;
+  // 30天热力图
+  html+='<div class="section-title">📅 最近 30 天</div><div class="calendar-heatmap">';
+  for(let i=29;i>=0;i--){
+    const d=dateStr(-i);
+    const data=state.history[d];
+    let level=0;
+    if(data){
+      const total=data.sunlight;
+      if(total>=100) level=4;
+      else if(total>=60) level=3;
+      else if(total>=20) level=2;
+      else if(total>0) level=1;
+    }
+    const isToday=d===currentDate;
+    html+=`<div class="heatmap-cell l${level} ${isToday?'today':''}" title="${d}">${d.slice(8)}</div>`;
+  }
+  html+='</div>';
+  // 各模块完成情况
+  html+='<div class="section-title">📈 各模块完成情况</div>';
+  const moduleKeys=Object.keys(state.modules);
+  moduleKeys.forEach(key=>{
+    const m=state.modules[key];
+    if(!m.enabled) return;
+    const done=checkModuleComplete(key);
+    html+=`<div class="list-item ${done?'done':''}"><span class="icon">${getModuleIcon(key)}</span><span class="text">${getModuleName(key)}</span><span class="badge ${done?'success':'danger'}">${done?'已完成':'未完成'}</span></div>`;
+  });
+  view.innerHTML=html;
+}
+
+// ==================== 奖励视图 ====================
+function renderRewards(){
+  const view=document.getElementById('view-rewards');
+  const data=getDayData(currentDate);
+  let html=`
+    <div class="module-header">
+      <h2>🎁 奖励中心</h2>
+      <p>当前阳光：<b>${data.sunlight}</b> ☀️ | 总向日葵：<b>${state.garden.sunflowers.length}</b> 🌻</p>
+    </div>
+    <div class="section-title">兑换奖励</div>
+  `;
+  state.rewards.customRewards.forEach((r,idx)=>{
+    const canAfford=data.sunlight>=r.cost;
+    html+=`<div class="reward-card">
+      <div class="icon">${r.emoji||'🎁'}</div>
+      <div class="info"><div class="name">${r.name}</div><div class="cost">☀️ ${r.cost} 阳光</div></div>
+      <button ${canAfford?'':'disabled'} onclick="claimReward(${idx})">兑换</button>
+    </div>`;
+  });
+  html+=`<div class="add-row"><input type="text" id="newRewardName" placeholder="奖励名称"><input type="number" id="newRewardCost" placeholder="阳光" style="flex:0 0 60px"><input type="text" id="newRewardEmoji" placeholder="emoji" style="flex:0 0 50px" maxlength="2"><button onclick="addReward()">➕ 添加</button></div>`;
+  // 兑换记录
+  html+='<div class="section-title">📋 兑换记录</div>';
+  if(state.rewards.claimed.length===0){
+    html+='<div class="empty-tip">还没有兑换记录</div>';
+  }else{
+    [...state.rewards.claimed].reverse().forEach(c=>{
+      html+=`<div class="list-item done"><span class="icon">${c.emoji||'🎁'}</span><span class="text">${c.name}</span><span class="meta">${c.date} -${c.cost}☀️</span></div>`;
+    });
+  }
+  view.innerHTML=html;
+}
+
+function claimReward(idx){
+  const r=state.rewards.customRewards[idx];
+  const data=getDayData(currentDate);
+  if(data.sunlight<r.cost){showToast('阳光不足！','danger');return}
+  data.sunlight-=r.cost;
+  state.rewards.claimed.push({name:r.name,cost:r.cost,date:currentDate,emoji:r.emoji});
+  saveState();
+  renderRewards();
+  renderTopStats();
+  renderBase();
+  showToast('🎉 兑换成功：'+r.name,'gold');
+}
+
+function addReward(){
+  const nameInput=document.getElementById('newRewardName');
+  const costInput=document.getElementById('newRewardCost');
+  const emojiInput=document.getElementById('newRewardEmoji');
+  const name=nameInput.value.trim();
+  if(!name){showToast('请输入奖励名称','danger');return}
+  const cost=parseInt(costInput.value)||50;
+  const emoji=emojiInput.value.trim()||'🎁';
+  state.rewards.customRewards.push({name,cost,emoji});
+  saveState();
+  nameInput.value='';costInput.value='';emojiInput.value='';
+  renderRewards();
+  showToast('已添加奖励','success');
+}
+
+// ==================== 设置 ====================
+function openSettings(){
+  openModal(`
+    <h3>⚙️ 设置</h3>
+    <div class="input-row">
+      <label style="font-size:.85em;color:var(--text-muted);display:block;margin-bottom:4px">基地名称</label>
+      <input type="text" id="settingBaseName" value="${state.settings.baseName}" style="width:100%;padding:10px;border:2px solid var(--card-border);border-radius:var(--radius-sm);letter-spacing:0">
+    </div>
+    <div class="input-row">
+      <label style="font-size:.85em;color:var(--text-muted);display:block;margin-bottom:4px">僵尸检查时间</label>
+      <input type="text" id="settingCheckTime" value="${state.settings.checkTime}" style="width:100%;padding:10px;border:2px solid var(--card-border);border-radius:var(--radius-sm);letter-spacing:0">
+    </div>
+    <div class="input-row">
+      <button onclick="setPassword()" style="background:var(--info);color:#fff;padding:10px;border-radius:var(--radius-sm);width:100%;font-weight:bold">${state.auth.passwordHash?'🔒 修改密码':'🔐 设置密码'}</button>
+    </div>
+    <div class="input-row">
+      <button onclick="exportData()" style="background:#fff;color:var(--text);border:1px solid var(--card-border);padding:10px;border-radius:var(--radius-sm);width:100%">📥 导出数据</button>
+    </div>
+    <div class="input-row">
+      <button onclick="importData()" style="background:#fff;color:var(--text);border:1px solid var(--card-border);padding:10px;border-radius:var(--radius-sm);width:100%">📤 导入数据</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn-primary" onclick="saveSettings()">保存</button>
+    </div>
+  `);
+}
+
+function saveSettings(){
+  state.settings.baseName=document.getElementById('settingBaseName').value.trim()||'我的花园基地';
+  state.settings.checkTime=document.getElementById('settingCheckTime').value.trim()||'22:00';
+  saveState();
+  closeModal();
+  renderBase();
+  showToast('设置已保存','success');
+}
+
+function setPassword(){
+  openModal(`
+    <h3>🔐 设置密码</h3>
+    <div class="err" id="pwdErr"></div>
+    <div class="input-row"><input type="password" id="pwd1" placeholder="输入4位密码" maxlength="4" inputmode="numeric"></div>
+    <div class="input-row"><input type="password" id="pwd2" placeholder="再次输入密码" maxlength="4" inputmode="numeric"></div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn-primary" onclick="savePassword()">保存</button>
+    </div>
+  `);
+}
+
+async function savePassword(){
+  const p1=document.getElementById('pwd1').value;
+  const p2=document.getElementById('pwd2').value;
+  const err=document.getElementById('pwdErr');
+  if(p1.length!==4){err.textContent='密码必须是4位数字';return}
+  if(p1!==p2){err.textContent='两次密码不一致';return}
+  // 简单哈希（前端不绝对安全，但能挡住普通用户）
+  const hash=await simpleHash(p1);
+  state.auth.passwordHash=hash;
+  state.auth.createdAt=currentDate;
+  saveState();
+  closeModal();
+  showToast('密码已设置','success');
+}
+
+async function simpleHash(s){
+  const enc=new TextEncoder().encode(s+'salt_enlighten_2026');
+  const buf=await crypto.subtle.digest('SHA-256',enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function checkAuth(){
+  if(state.auth.passwordHash){
+    openModal(`
+      <h3>🔒 请输入密码</h3>
+      <div class="err" id="pwdErr"></div>
+      <div class="input-row"><input type="password" id="pwdInput" placeholder="4位密码" maxlength="4" inputmode="numeric" autofocus></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="verifyPwd()" style="flex:1">进入</button>
+      </div>
+    `);
+    // 回车提交
+    setTimeout(()=>{
+      const inp=document.getElementById('pwdInput');
+      if(inp) inp.addEventListener('keydown',e=>{if(e.key==='Enter')verifyPwd()});
+    },100);
+  }
+}
+
+async function verifyPwd(){
+  const input=document.getElementById('pwdInput').value;
+  const hash=await simpleHash(input);
+  if(hash===state.auth.passwordHash){
+    closeModal();
+    showToast('欢迎回来！','success');
+  }else{
+    document.getElementById('pwdErr').textContent='密码错误';
+    document.getElementById('pwdInput').value='';
+  }
+}
+
+function exportData(){
+  const json=JSON.stringify(state);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='enlightenment-backup-'+currentDate+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('数据已导出','success');
+}
+
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        state=Object.assign(defaultState(),data);
+        saveState();
+        renderView(currentView);
+        renderBase();
+        closeModal();
+        showToast('数据已导入','success');
+      }catch(err){
+        showToast('导入失败：文件格式错误','danger');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ==================== 僵尸机制 ====================
+function checkZombieAttack(){
+  const yesterday=dateStr(-1);
+  if(state.stats.lastCheckDate===yesterday) return;
+  const data=state.history[yesterday];
+  if(!data){
+    state.stats.lastCheckDate=yesterday;
+    state.stats.currentStreak=0;
+    saveState();
+    return;
+  }
+  const enabledModules=Object.keys(state.modules).filter(k=>state.modules[k].enabled);
+  const undone=enabledModules.filter(k=>!checkModuleCompleteForDate(k,yesterday));
+  if(undone.length===0){
+    // 全部完成
+    if(state.stats.lastPerfectDate!==yesterday){
+      state.stats.perfectDays++;
+      state.stats.currentStreak++;
+      state.stats.lastPerfectDate=yesterday;
+    }
+  }else{
+    state.stats.currentStreak=0;
+    undone.forEach(key=>{
+      const zType=ZOMBIE_TYPES[Math.floor(Math.random()*ZOMBIE_TYPES.length)];
+      state.garden.zombies.push({id:'z_'+Date.now()+Math.random(),emoji:zType,date:yesterday,from:getModuleName(key)+'未完成'});
+      // 僵尸吃植物
+      if(state.garden.sunflowers.length>0){
+        const eaten=state.garden.sunflowers.shift();
+        showToast('🧟 僵尸吃掉了 '+eaten.emoji+' ('+eaten.from+')','danger');
+      }
+    });
+    state.stats.totalZombies=(state.stats.totalZombies||0)+undone.length;
+    if(state.garden.sunflowers.length===0&&undone.length>0){
+      state.garden.defeatedAt=yesterday;
+    }
+  }
+  state.stats.lastCheckDate=yesterday;
+  saveState();
+}
+
+function checkModuleCompleteForDate(key,date){
+  const data=state.history[date];
+  if(!data) return false;
+  const m=state.modules[key];
+  if(!m||!m.enabled) return true;
+  switch(key){
+    case 'books_zh': return data.books.zh.length>=m.target;
+    case 'books_en': return data.books.en.length>=m.target;
+    case 'books_math': return data.books.math.length>=m.target;
+    case 'books_science': return data.books.science.length>=m.target;
+    case 'english_animation': return data.english_animation.minutes>=m.target;
+    case 'english_listen': return data.english_listen.places.length>=m.target;
+    case 'english_cards': return (data.english_cards.learned.length+data.english_cards.review.length)>=m.target;
+    case 'poetry': return data.poetry.review.length>=m.target||data.poetry.new.length>=m.target;
+    case 'literacy': return (data.literacy.new.length+data.literacy.review.length)>=m.target;
+    case 'math': return data.math.items.length>=m.target;
+  }
+  return false;
+}
+
+// ==================== 初始化 ====================
+function init(){
+  checkZombieAttack();
+  updateNavDots();
+  renderBase();
+  // 延迟检查密码
+  setTimeout(checkAuth,500);
+}
+
+document.getElementById('modalMask').addEventListener('click',e=>{
+  if(e.target.id==='modalMask'){
+    // 只有关闭按钮可以关闭，密码验证模态不可点击外部关闭
+    if(!document.getElementById('pwdInput')) closeModal();
+  }
+});
+
+init();
+</script>
+</body>
+</html>
