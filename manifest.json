@@ -1,7 +1,7 @@
 {
-  "name": "0-6岁全科启蒙打卡",
-  "short_name": "全科启蒙",
-  "description": "0-6岁全科启蒙打卡 - 完成每日任务保卫花园，收集阳光兑换奖励。绘本、英语、古诗、识字、数学一站搞定。",
+  "name": "二九全科启蒙",
+  "short_name": "二九启蒙",
+  "description": "二九全科启蒙 - 完成每日任务保卫花园，收集阳光兑换奖励。绘本、英语、古诗、识字、数学一站搞定。",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
